@@ -9,7 +9,7 @@
         },
         {
             "name": "prompt",
-            "value": "{'employee_id': 6, 'employee_name': 'Emily Davis', 'employee_dob': '2001-11-04', 'employee_homepage': 'https://palapaslot.com/5.php', 'employee_job_title': 'Designer', 'employee_start_date': '2021-01-15', 'employee_employement_status': 'Inactive'}"
+            "value": "Here are the details for Emily Davis:\n- Employee ID: 6\n- Employee Name: Emily Davis\n- Date of Birth: 2001-11-04\n- Homepage: https://palapaslot.com/5.php\n- Job Title: Designer\n- Start Date: 2021-01-15\n- Employment Status: Inactive"
         }
     ],
     "messageVersion": "1.0"
