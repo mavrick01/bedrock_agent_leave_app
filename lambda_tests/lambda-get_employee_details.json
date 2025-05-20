@@ -1,0 +1,12 @@
+{
+    "agent": "12345",
+    "actionGroup": "1234",
+    "function": "employee_details",
+    "parameters": [
+        {
+            "name": "employee_id",
+            "value": "6"
+        }
+    ],
+    "messageVersion": "1.0"
+}

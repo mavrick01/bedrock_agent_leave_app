@@ -1,0 +1,8 @@
+# Enter you AIRS application API Key - You must insert one for it to work
+airs_api_key = "<YOUR API KEY>"
+# Enter you prompt profile name - You must insert one for it to work
+airs_prompt_profile = "<YOUR PROFILE NAME>"
+# Enter you AIRS response profile name - If you do not define it, it will use the same profile as the prompt profile
+# airs_response_profile = ""
+# Enter your AWS Region, if you leave it blank it will use us-east-1
+# aws_region  = ""

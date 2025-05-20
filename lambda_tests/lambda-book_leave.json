@@ -1,0 +1,20 @@
+{
+    "agent": "12345",
+    "actionGroup": "1234",
+    "function": "book_leave",
+    "parameters": [
+        {
+            "name": "employee_id",
+            "value": "1"
+        },
+        {
+            "name": "start_date",
+            "value": "2025-12-02"
+        },
+        {
+            "name": "end_date",
+            "value": "2025-12-03"
+        }
+    ],
+    "messageVersion": "1.0"
+}

@@ -1,0 +1,24 @@
+# Terraform-specific files
+terraform.tfstate
+terraform.tfstate.backup
+terraform.lock.hcl
+.terraform/*
+*.tfvars
+terraform.tfplan
+.terraform/modules/*
+
+#Sensitive Files
+*.key
+*.pem
+*.pub
+*.env
+
+# Log files and temporary files
+*.log
+tmp/ 
+crash.log
+
+# Other files
+backend.tf
+.vscode/*
+*.code-workspace

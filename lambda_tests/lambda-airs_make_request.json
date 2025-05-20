@@ -1,0 +1,16 @@
+{
+    "agent": "12345",
+    "actionGroup": "1234",
+    "function": "airs_make_request",
+    "parameters": [
+        {
+            "name": "reqtype",
+            "value": "response"
+        },
+        {
+            "name": "prompt",
+            "value": "{'employee_id': 6, 'employee_name': 'Emily Davis', 'employee_dob': '2001-11-04', 'employee_homepage': 'https://palapaslot.com/5.php', 'employee_job_title': 'Designer', 'employee_start_date': '2021-01-15', 'employee_employement_status': 'Inactive'}"
+        }
+    ],
+    "messageVersion": "1.0"
+}
