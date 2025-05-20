@@ -241,10 +241,9 @@ def cancel_leave(employee_number: int, start_date_str: str) -> dict[str, any]:
         connection.close()
 
 # Call AIRS Must define the reqest type to be prompt or response, the body an app name app user and transcaction id. It will return True if it allowed, else will give a string with the reason.
-def airs_make_request(reqtype, prompt_val, app_name, app_user, tr_id):
+def airs_make_request(reqtype, prompt, app_name, app_user, tr_id):
     try: 
-
-        req = airs_construct_request(reqtype, prompt_val.replace("\n", " "), app_name, app_user, tr_id)
+        req = airs_construct_request(reqtype, prompt.replace("\n", " "), app_name, app_user, tr_id)
         # URL of the API endpoint
         url = "https://service.api.aisecurity.paloaltonetworks.com/v1/scan/sync/request"
         header = {
@@ -268,7 +267,7 @@ def airs_make_request(reqtype, prompt_val, app_name, app_user, tr_id):
                 return True
         else:
             # Failed API call
-            print(f"Failed to make API call. Status code: {resp.status_code}")
+            print(f"Failed to make API call. Status code: {resp.status_code}  request: {req}")
             print(resp.text)
             return f"Failed to make API call. Status code: {resp.status_code}  request: {req}"
     except Exception as e:
@@ -280,8 +279,6 @@ def airs_construct_request(reqtype, input_value, app_name, app_user, tr_id):
     # Set the right profile name
     profile_name = os.environ['AIRS_PROMPT_PROFILE'] if reqtype == 'prompt' else  os.environ['AIRS_RESPONSE_PROFILE']
     # JSON data for the API call
-    
-
     try:
         req = '''
         {
@@ -301,7 +298,6 @@ def airs_construct_request(reqtype, input_value, app_name, app_user, tr_id):
             }
         }
         ''' %(app_name, app_user, reqtype, input_value, tr_id, profile_name)
-        print(f"Received prompt: {req}") 
         json_data = json.loads(req)
         return json_data
     except Exception as e:
@@ -338,7 +334,7 @@ def lambda_handler(event, context):
     
     print("Lambda function execution started.")
     print(f"Received event: {json.dumps(event)}") # Good for seeing the input
-    
+
     agent = event['agent']
     actionGroup = event['actionGroup']
     function = event['function']
@@ -454,7 +450,7 @@ def lambda_handler(event, context):
         }  
     elif function == 'airs_make_request':
         reqtype = None
-        prompt_val = None
+        prompt = None
         app_name = None
         app_user = None
         tr_id = None
@@ -462,7 +458,7 @@ def lambda_handler(event, context):
             if param["name"] == "reqtype":
                 reqtype = param["value"]
             if param["name"] == "prompt":
-                prompt_val = param["value"]
+                prompt = param["value"]
             if param["name"] == "app_name":
                 app_name = param["value"]
             if param["name"] == "app_user":
@@ -472,7 +468,7 @@ def lambda_handler(event, context):
             
         if not reqtype:
             raise Exception("Missing mandatory parameter: reqtype")
-        if not prompt_val:
+        if not prompt:
             raise Exception("Missing mandatory parameter: prompt")
         if not app_name:
             app_name ="test app"
@@ -480,9 +476,8 @@ def lambda_handler(event, context):
             app_user = "test user"
         if not tr_id:
             tr_id = "test id"
-
         
-        completion_message = airs_make_request(reqtype, prompt_val.strip(), app_name, app_user, tr_id)
+        completion_message = airs_make_request(reqtype, prompt, app_name, app_user, tr_id)
         responseBody =  {
             'TEXT': {
                 "body": completion_message
