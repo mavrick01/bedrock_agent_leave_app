@@ -6,6 +6,7 @@ terraform.lock.hcl
 *.tfvars
 terraform.tfplan
 .terraform/modules/*
+.terraform.lock.hcl
 
 #Sensitive Files
 *.key
