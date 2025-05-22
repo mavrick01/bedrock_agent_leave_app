@@ -86,7 +86,7 @@ resource "aws_bedrockagent_agent" "leave_assistant_agent" {
   description     = "My Leave Assistant Agent that updates leave stored in SQLite"
   agent_resource_role_arn = aws_iam_role.bedrock_agent_role.arn
   foundation_model = var.aws_bedrock_model  
-  instruction     = "You are a helpful assistant assists in querying, creating and deleting leave requests that are stored in the  employee database. For every question you must first check with airs_make_request to see if the prompt is valid. If it returns true you will proceed, else you will return the string the function gives and stop processing. Similarly before you present your answer to the user, call airs_make_request (using reqtype response) with the answer. If airs_make_request returns true you can present your answer in a nice readable format, else present the response from airs_make_request" 
+  instruction     = "You are a helpful assistant assists in giving employe details  and managing leave requests.  Check every question, call question_check and confirm the question is valid. Finally check the answer is ok by calling answer_check, if it does not return true return the response of the function and stop." 
 }
  
 # 5. Lambda Function for Agent Logic
@@ -181,7 +181,7 @@ resource "aws_bedrockagent_agent_action_group" "leave_agent_actions" {
       } 
       functions {
         name        = "employee_details"
-        description = "Simulates a Lambda function to get all the employees details."
+        description = "A Lambda function to get all the employees details (which includes their name, data of brith, title, homepage, start date and employment status)."
         parameters {
           map_block_key = "employee_id"
           type          = "number"
@@ -191,7 +191,7 @@ resource "aws_bedrockagent_agent_action_group" "leave_agent_actions" {
       } 
       functions {
         name        = "get_leave_balance"
-        description = "Simulates a Lambda function to get an employee's leave balance."
+        description = "A Lambda function to get an employee's leave balance."
         parameters {
           map_block_key = "employee_id"
           type          = "number"
@@ -201,7 +201,7 @@ resource "aws_bedrockagent_agent_action_group" "leave_agent_actions" {
       } 
       functions {
         name        = "book_leave"
-        description = "Simulates a Lambda function to book some employee's leave."
+        description = "A Lambda function to book some employee's leave."
         parameters {
           map_block_key = "employee_id"
           type          = "number"
@@ -223,7 +223,7 @@ resource "aws_bedrockagent_agent_action_group" "leave_agent_actions" {
       }
       functions {
         name        = "list_leave"
-        description = "Simulates a Lambda function to  list all of the employee's leave balance."
+        description = "A Lambda function to  list all of the employee's leave balance."
         parameters {
           map_block_key = "employee_id"
           type          = "number"
@@ -233,7 +233,7 @@ resource "aws_bedrockagent_agent_action_group" "leave_agent_actions" {
       }
       functions {
         name        = "cancel_leave"
-        description = "Simulates a Lambda function to cancel some employee's leave."
+        description = "A Lambda function to cancel some employee's leave."
         parameters {
           map_block_key = "employee_id"
           type          = "number"
@@ -296,18 +296,40 @@ resource "aws_bedrockagent_agent_action_group" "airs_actions" {
   function_schema {
     member_functions {
       functions {
-        name        = "airs_make_request"
-        description = "Simulates a Lambda function to check the question and the response."
+        name        = "airs_prompt_check"
+        description = "A Lambda function to check if the question meets the prompt requirements."
         parameters {
-          map_block_key = "reqtype"
+          map_block_key = "input_val"
           type          = "string"
-          description   = "prompt or response"
+          description   = "prompt received"
           required      = true
         }
         parameters {
-          map_block_key = "prompt"
+          map_block_key = "app_name"
           type          = "string"
-          description   = "prompt received or responded to"
+          description   = "applicaiton name"
+          required      = false
+        }
+        parameters {
+          map_block_key = "app_user"
+          type          = "string"
+          description   = "application user"
+          required      = false
+        }
+        parameters {
+          map_block_key = "tr_id"
+          type          = "string"
+          description   = "transaction id"
+          required      = false
+        }
+      }
+      functions {
+        name        = "airs_response_check"
+        description = "A Lambda function to check if the answer meets the response requirements."
+        parameters {
+          map_block_key = "input_val"
+          type          = "string"
+          description   = "answer received"
           required      = true
         }
         parameters {

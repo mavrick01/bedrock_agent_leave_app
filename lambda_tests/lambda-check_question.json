@@ -1,0 +1,12 @@
+{
+    "agent": "12345",
+    "actionGroup": "1234",
+    "function": "check_question",
+    "parameters": [
+        {
+            "name": "input_val",
+            "value": "Here are the details for Emily Davis:\n- Employee ID: 6\n- Employee Name: Emily Davis\n- Date of Birth: 2001-11-04\n- Homepage: https://palapaslot.com/5.php\n- Job Title: Designer\n- Start Date: 2021-01-15\n- Employment Status: Inactive"
+        }
+    ],
+    "messageVersion": "1.0"
+}

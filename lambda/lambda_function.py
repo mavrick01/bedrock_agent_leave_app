@@ -66,7 +66,7 @@ def employee_details(employee_number: int) -> dict[str, any]:
                     "employee_start_date": result[5],
                     "employee_employement_status": result[6]
                 }
-            return  employee_file
+            return  f"{employee_file}. Check check_answer if this meets the requirements"
         else:
              return {"error": "Employee not found"}
     except Exception as e:
@@ -232,13 +232,14 @@ def cancel_leave(employee_number: int, start_date_str: str) -> dict[str, any]:
                 (leave_duration, employee_number),
             )
         connection.commit()
-        return {"message": "Leave cancelled successfully"}
+        return {"message": "Leave starting on {start_date} cancelled successfully"}
     except ValueError:
         return {"error": "Invalid date format. Use YYYY-MM-DD"}
     except Exception as e:
         return {"error": f"Error cancelling leave: {e}"}
     finally:
         connection.close()
+
 
 # Call AIRS Must define the reqest type to be prompt or response, the body an app name app user and transcaction id. It will return True if it allowed, else will give a string with the reason.
 def airs_make_request(reqtype, prompt, app_name, app_user, tr_id):
@@ -264,7 +265,7 @@ def airs_make_request(reqtype, prompt, app_name, app_user, tr_id):
                 else:
                     return airs_construct_response(json_resp['response_detected'])
             else:
-                return True
+                return prompt
         else:
             # Failed API call
             print(f"Failed to make API call. Status code: {resp.status_code}  request: {req}")
@@ -332,7 +333,6 @@ def lambda_handler(event, context):
     if not os.path.exists(target_db_file):
         shutil.copy2(original_db_file, target_db_file)
     
-    print("Lambda function execution started.")
     print(f"Received event: {json.dumps(event)}") # Good for seeing the input
 
     agent = event['agent']
@@ -445,20 +445,18 @@ def lambda_handler(event, context):
         completion_message = cancel_leave(employee_id, start_date)
         responseBody =  {
             'TEXT': {
-                "body": completion_message
+                "body": json.dumps(completion_message)
             }
         }  
-    elif function == 'airs_make_request':
+    elif function == 'check_question' or function == 'check_answer' :
         reqtype = None
         prompt = None
         app_name = None
         app_user = None
         tr_id = None
         for param in parameters:
-            if param["name"] == "reqtype":
-                reqtype = param["value"]
-            if param["name"] == "prompt":
-                prompt = param["value"]
+            if param["name"] == "input_val":
+                input_val = param["value"]
             if param["name"] == "app_name":
                 app_name = param["value"]
             if param["name"] == "app_user":
@@ -466,10 +464,8 @@ def lambda_handler(event, context):
             if param["name"] == "tr_id":
                 tr_id = param["value"]
             
-        if not reqtype:
-            raise Exception("Missing mandatory parameter: reqtype")
-        if not prompt:
-            raise Exception("Missing mandatory parameter: prompt")
+        if not input_val:
+            raise Exception("Missing mandatory parameter: input_val")
         if not app_name:
             app_name ="test app"
         if not app_user:
@@ -477,12 +473,16 @@ def lambda_handler(event, context):
         if not tr_id:
             tr_id = "test id"
         
-        completion_message = airs_make_request(reqtype, prompt, app_name, app_user, tr_id)
+        if function == 'check_question':
+            completion_message = airs_make_request("prompt",input_val, app_name, app_user, tr_id)
+        elif function == 'check_answer':
+            completion_message = airs_make_request("response",input_val, app_name, app_user, tr_id)
         responseBody =  {
             'TEXT': {
                 "body": completion_message
             }
         }  
+    
     
     
     action_response = {
